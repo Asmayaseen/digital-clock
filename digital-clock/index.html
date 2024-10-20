@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Clock Design</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unicorns.iconscout.com/release/v4.0.0/css/line.css">
+</head>
+<body>
+
+    <div class="digital-clock">
+        <i class="uil uil-ellipsis-v dot-menu-btn"></i>
+        <ul class="dot-menu">
+            <li class="menu-item">
+                <span class="clock-format-text">24-hour format</span>
+                <div class="format-switch-btn" data-format="12"></div>
+            </li>
+        </ul>
+        <div class="time">
+            <span class="hours">00</span>
+            <span class="dots">:</span>
+            <span class="minutes">00</span>
+            <div class="right-Side">
+                <span class="period">AM/PM</span>
+                <span class="seconds">00</span>
+            </div>
+        </div>
+        <div class="calendar">
+            <span class="month-name">Month</span>,
+            <span class="day-name">Day</span>
+            <span class="day-number">00</span>
+            <span class="year">0000</span>
+        </div>
+    </div>
+    <script>
+        const formatSwitchBtn = document.querySelector(".format-switch-btn");
+        const periodDisplay = document.querySelector(".period");
+
+        formatSwitchBtn.addEventListener("click", () => {
+            formatSwitchBtn.classList.toggle("active");
+
+            let formatValue = formatSwitchBtn.getAttribute("data-format");
+            formatValue = formatValue === "12" ? "24" : "12";
+            formatSwitchBtn.setAttribute("data-format", formatValue);
+            clock(); // Update the clock display immediately
+        });
+
+        function clock() {
+            const today = new Date();
+            let hours = today.getHours();
+            const minutes = today.getMinutes();
+            const seconds = today.getSeconds();
+            let period = "AM";
+
+            if (hours >= 12) {
+                period = "PM";
+            }
+
+            const formatValue = formatSwitchBtn.getAttribute("data-format");
+            if (formatValue === "12") {
+                hours = hours % 12 || 12; // Convert to 12-hour format
+            }
+
+            const displayHours = hours < 10 ? "0" + hours : hours;
+            const displayMinutes = minutes < 10 ? "0" + minutes : minutes;
+            const displaySeconds = seconds < 10 ? "0" + seconds : seconds;
+
+            document.querySelector(".hours").innerHTML = displayHours;
+            document.querySelector(".minutes").innerHTML = displayMinutes;
+            document.querySelector(".seconds").innerHTML = displaySeconds;
+
+            // Update period display based on format
+            periodDisplay.style.display = formatValue === "24" ? "none" : "inline";
+            periodDisplay.innerHTML = period;
+        }
+
+        setInterval(clock, 1000);
+
+        const today = new Date();
+        document.querySelector(".month-name").innerHTML = today.toLocaleString("default", { month: "short" });
+        document.querySelector(".day-name").innerHTML = today.toLocaleString("default", { weekday: "long" });
+        document.querySelector(".day-number").innerHTML = today.getDate();
+        document.querySelector(".year").innerHTML = today.getFullYear();
+
+        const dotmenuBtn = document.querySelector(".dot-menu-btn");
+        const dotMenu = document.querySelector(".dot-menu");
+
+        dotmenuBtn.addEventListener("click", () => {
+            dotMenu.classList.toggle("active");
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!dotmenuBtn.contains(e.target) && !dotMenu.contains(e.target)) {
+                dotMenu.classList.remove("active");
+            }
+        });
+    </script>
+</body>
+</html>
